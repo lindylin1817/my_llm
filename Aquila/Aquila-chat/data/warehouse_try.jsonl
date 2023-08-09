@@ -1,0 +1,12 @@
+{"context": "Instruction: 增加一个货主，名字叫张三。\nAnswer: ", "target": "INSERT INTO [stock_owner_table_name] (stock_owner_name) VALUES('张三');"}
+{"context": "Instruction: 给加一个货主，姓名是王爱国。\nAnswer: ", "target": "INSERT INTO [stock_owner_table_name] (stock_owner_name) VALUES('王爱国');"}
+{"context": "Instruction: 名字叫张金泉的新货主给添加一下。\nAnswer: ", "target": "INSERT INTO [stock_owner_table_name] (stock_owner_name) VALUES('张金泉');"}
+{"context": "Instruction: 往天津仓库加一批钢材，10吨，货主是金峰。\nAnswer: ", "target": "INSERT INTO stock (warehouse_id, stock_owner_id, stock_name, stock_amount) VALUES((SELECT id FROM warehouse WHERE warehouse_name='天津'), (SELECT stock_owner_id FROM stock_owner WHERE stock_owner_name='金峰'), '钢材', 10);"}
+{"context": "Instruction: 石家庄的仓库加一批货，是云南橡胶厂的橡胶，刘达的，一共34吨。\nAnswer: ", "target": "INSERT INTO stock (warehouse_id, stock_owner_id, stock_name, stock_amount, manufacture_id) VALUES((SELECT id FROM warehouse WHERE warehouse_name='石家庄'), (SELECT stock_owner_id FROM stock_owner WHERE stock_owner_name='刘达'), '橡胶', 34, (SELECT manufacture_id FROM manufacture WHERE manufacture_name='云南橡胶厂'));"}
+{"context": "Instruction: 货主吴孟达有50吨的煤炭，来自山东煤厂的，加到云南邮政仓库。\nAnswer: ", "target": "INSERT INTO stock (warehouse_id, stock_owner_id, stock_name, stock_amount, manufacture_id) VALUES((SELECT id FROM warehouse WHERE warehouse_name='云南邮政'), (SELECT stock_owner_id FROM stock_owner WHERE stock_owner_name='吴孟达'), '煤炭', 50, (SELECT manufacture_id FROM manufacture WHERE manufacture_name='山东煤厂'));"}
+{"context": "Instruction: null value in column \"warehouse_id\" violates not-null constraint.\nAnswer: ", "target": "没有这个仓库，您再核对一下？"}
+{"context": "Instruction: null value in column \"stock_owner_id\" violates not-null constraint.\nAnswer: ", "target": "没有这个货主，您再核对一下？"}
+{"context": "Instruction: column \"stock_amount\" does not exist.\nAnswer: ", "target": "没有货物数量，请提供，谢谢！"}
+{"context": "Instruction: invalid input syntax for type integer: \"吨\".", "target": "您给的信息有些问题，再检查一下？谢谢"}
+{"context": "Instruction: invalid input syntax for type integer: \"粮食\".", "target": "您给的信息有些问题，再检查一下？谢谢"}
+{"context": "Instruction: more than one row returned by a subquery used as an expression", "target": "您给的信息，在数据库里面有多个同值，检查一下？"}

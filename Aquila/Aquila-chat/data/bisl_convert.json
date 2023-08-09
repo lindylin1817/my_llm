@@ -1,0 +1,157 @@
+[
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nprimals_7: f32[8, 512, 768]\nview: f32[4096, 768] = torch.ops.aten.view.default(primals_7, [4096, 768]);\nprimals_7 = None\n",
+        "output": "#BSIL: \nINPUT primals_7<8, 512, 768>: f32 \nview<4096, 768> = view primals_7 {{  \n          !shape=[4096, 768]\n          INPUT i0, i1: u64\n          o0, o1 = idiv i0 512\n          OUTPUT o0, o1, i1\n    }}\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nprimals_1：f32[768, 768]\npermute: f32[768, 768] = torch.ops.aten.permute.default(primals_1, [1, 0]);  \nprimals_1 = None\n",
+        "output": "#BSIL: \nINPUT primals_1<768, 768>: f32\npermute<768, 768> = view primals_1 {{\n          !shape=[768, 768]\n          INPUT i0, i1: u64\n          OUTPUT i1, i0\n}}\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nprimals_1: f32[768, 768]\nprimals_2: f32[768]\nview: f32[4096, 768]\npermute: f32[768, 768] = torch.ops.aten.permute.default(primals_1, [1, 0]);  \nprimals_1 = None\naddmm: f32[4096, 768] = torch.ops.aten.addmm.default(primals_2, view, permute);  \nprimals_2 = permute = None\n",
+        "output": "#BSIL: \nINPUT primals_1<768, 768>: f32\nINPUT primals_2<768>: f32\nINPUT view<4096, 768>: f32\nview_v<4096, 1, 768> = view view {{  \n          !shape=[4096, 1, 768] \n          INPUT i0, i1, i2: u64\n          OUTPUT i0, i2\n    }}\n    addmm<4096, 768> = join view_v primals_1 primals_2\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \naddmm: f32[4096, 768]\nview_1: f32[8, 512, 768] = torch.ops.aten.view.default(addmm, [8, 512, 768]);\naddmm = None\n",
+        "output": "#BSIL: \nINPUT addmm<4096, 768>: f32 \nview_1<8, 512, 768> = view addmm {{  \n        !shape=[8, 512, 768]\n        INPUT i0, i1, i2: u64\n        o0: u64 = linear [i0, i1] [512, 1]\n        OUTPUT o0, i2\n    }}\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nprimals_3：f32[768, 768]\npermute_1: f32[768, 768] = torch.ops.aten.permute.default(primals_3, [1, 0]);  \nprimals_3 = None\n",
+        "output": "#BSIL: \nINPUT primals_3<768, 768>: f32\npermute_1<768, 768> = view primals_3 {{\n          !shape=[768, 768]\n          INPUT i0, i1: u64\n          OUTPUT i1, i0\n}}\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nprimals_3: f32[768]\nprimals_4: f32[768]\nview: f32[4096, 768]\npermute_1: f32[768, 768] = torch.ops.aten.permute.default(primals_3, [1, 0]);  \nprimals_3 = None\naddmm_1: f32[4096, 768] = torch.ops.aten.addmm.default(primals_4, view, permute_1);  \nprimals_4 = permute_1 = None\n",
+        "output": "#BSIL: \nINPUT primals_3<768>: f32\nINPUT primals_4<768>: f32\nINPUT view<4096, 768>: f32\nview_v<4096, 1, 768> = view view {{  \n          !shape=[4096, 1, 768] \n          INPUT i0, i1, i2: u64\n          OUTPUT i0, i2\n    }}\naddmm_1<4096, 768> = join view_v primals_3 primals_4\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \naddmm_1：f32[4096, 768]\nview_3: f32[8, 512, 768] = torch.ops.aten.view.default(addmm_1, [8, 512, 768]);  \naddmm_1 = None\n",
+        "output": "#BSIL: \nINPUT addmm_1<4096, 768>: f32 \nview_3<8, 512, 768> = view addmm_1 {{\n        !shape=[8, 512, 768]\n        INPUT i0, i1, i2: u64\n        o0: u64 = linear [i0, i1] [512, 1]\n        OUTPUT o0, i2\n    }}\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nview_3：f32[8, 512, 768]\nview_4: f32[8, 512, 12, 64] = torch.ops.aten.view.default(view_3, [8, 512, 12, 64]);  \nview_3 = None\n",
+        "output": "#BSIL: \nINPUT view_3<8, 512, 768>: f32 \nview_4<8, 512, 12, 64> = view view_3 {{\n        !shape=[8, 512, 12, 64]\n        INPUT i0, i1, i2, i3: u64\n        o2: u64 = linear [i2, i3] [64, 1]\n        OUTPUT i0, i1, o2\n    }}\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nview_4：f32[8, 512, 12, 64]\npermute_2: f32[8, 12, 512, 64] = torch.ops.aten.permute.default(view_4, [0, 2, 1, 3]);  \nview_4 = None\n",
+        "output": "#BSIL: \nINPUT view_4<8, 512, 12, 64>: f32\npermute_2<8, 12, 512, 64> = view view_4 {{\n          !shape=[8, 12, 512, 64]\n          INPUT i0, i1, i2, i3: u64\n          OUTPUT i0, i2, i1, i3\n    }}\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nprimals_5: f32[768, 768]\nprimals_6: f32[768]\nview: f32[4096, 768]\npermute 3: f32[768, 768] = torch.ops.aten.permute.default(primals_5, [1, 0])\nprimals 5 = None\naddmm_2: f32[4096, 768] = torch.ops.aten.addmm.default(primals_6, view, permute_3)\nprimals_6 = permute_3 = None\n",
+        "output": "#BSIL: \nINPUT primals_5<768, 768>: f32\nINPUT primals_6<768>: f32\nINPUT view<4096, 768>: f32\nview_v<4096, 1, 768> = view view {{  \n          !shape=[4096, 1, 768] \n          INPUT i0, i1, i2: u64\n          OUTPUT i0, i2\n    }}\n addmm_2<4096, 768> = join view_v primals_5 primals_6\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \npermute_5: f32[8, 12, 512, 64]\nexpand: f32[8, 12, 512, 64] = torch.ops.aten.expand.default(permute_5, [8, 12, 512, 64]);  \npermute_5 = None\n",
+        "output": "#BSIL: \nINPUT primals_5<8, 12, 512, 64>: f32\nexpand<8, 12, 512, 64> = view permute_5 {{\n          !shape=[8, 12, 512, 64]\n          INPUT i0, i1, i2, i3: u64\n          OUTPUT i0, i1, i2, i3\n    }}\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nexpand: f32[8, 12, 512, 64]\nclone: f32[8, 12, 512, 64] = torch.ops.aten.clone.default(expand, memory_format = torch.contiguous_format)\nexpand = None\n",
+        "output": "#BSIL: \nINPUT expand<8, 12, 512, 64>: f32\nclone<8, 12, 512, 64> = copy expand\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nclone: f32[8, 12, 512, 64]\n_unsafe_view: f32[96, 512, 64] = torch.ops.aten._unsafe_view.default(clone, [96, 512, 64])\nclone = None\n",
+        "output": "#BSIL: \nINPUT clone<8, 12, 512, 64>: f32\n_unsafe_view<96, 512, 64> = view clone {{\n        !shape=[96, 512, 64]\n        INPUT i0, i1, i2: u64\n        o0, o1: u64 = idiv i0 12\n        OUTPUT o0, o1, i1, i2\n    }}\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \n_unsafe_view: f32[96, 512, 64]\n_unsafe_view_1: f32[96, 64, 512]\nbmm: f32[96, 512, 512] = torch.ops.aten.bmm.default(_unsafe_view, _unsafe_view_1)\n",
+        "output": "#BSIL: \nINPUT _unsafe_view<96, 512, 64>: f32\nINPUT _unsafe_view_1<96, 64, 512>: f32\n_unsafe_view_v<96, 512, 1, 64> = view _unsafe_view {{\n          !shape=[96, 512, 1, 64]\n          INPUT i0, i1, i2, i3: u64\n          OUTPUT i0, i1, i3\n    }}\n_unsafe_view_1_v<96, 1, 512, 64> = view _unsafe_view_1 {{\n          !shape=[96, 1, 512, 64]\n          INPUT i0, i1, i2, i3: u64\n          OUTPUT i0, i3, i2\n    }}\nbmm<96, 512, 512> = join _unsafe_view_v _unsafe_view_1_v\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nbmm：f32[96, 512, 512]\nview_9: f32[8, 12, 512, 512] = torch.ops.aten.view.default(bmm, [8, 12, 512, 512])\nbmm = None\n",
+        "output": "#BSIL: \nINPUT bmm<96, 512, 512>: f32 \nview_9<8, 12, 512, 512> = view bmm {{\n          !shape=[8, 12, 512, 512]\n          INPUT i0, i1, i2, i3: u64\n          o0 = linear [i0, i1] [12, 1]\n          OUTPUT o0, i2, i3\n    }}\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nview_9：f32[8, 12, 512, 512]\ndiv: f32[8, 12, 512, 512] = torch.ops.aten.div.Tensor(view_9, 8.0)\nview_9 = None\n",
+        "output": "#BSIL: \nINPUT view_9<8, 12, 512, 512>: f32 \ndiv<8, 12, 512, 512> = map view_9 {{\n          !shape=[8, 12, 512, 512]\n          INPUT x: f32\n          y: f32 = div x 8.0\n          OUTPUT y\n    }}\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \ndiv：f32[8, 12, 512, 512]\nprimals_8: f32[8, 12, 512, 512]\nadd: f32[8, 12, 512, 512] = torch.ops.aten.add.Tensor(div, primals_8)\ndiv = primals_8 = None\n",
+        "output": "#BSIL: \nINPUT div<8, 12, 512, 512>: f32 \nINPUT primals_8<8, 12, 512, 512>: f32 \nadd<8, 12, 512, 512> = map div primals_8 {{\n          !shape=[8, 12, 512, 512]\n          INPUT x, y: f32\n          z: f32 = add x y\n          OUTPUT z\n    }}\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nadd：f32[8, 12, 512, 512]\namax: f32[8, 12, 512, 1] = torch.ops.aten.amax.default(add, [-1], True)\n",
+        "output": "#BSIL: \nINPUT add<8, 12, 512, 512>: f32 \namax<8, 12, 512, 1> = xreduce add {{\n          INPUT row[512]: f32\n          max: f32 = max row\n          OUTPUT max\n    }}\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nadd：f32[8, 12, 512, 512]\namax: f32[8, 12, 512, 1]\nsub: f32[8, 12, 512, 512] = torch.ops.aten.sub.Tensor(add, amax)\nadd = amax = None\n",
+        "output": "#BSIL: \nINPUT add<8, 12, 512, 512>: f32 \nINPUT amax<8, 12, 512, 1>: f32 \nsub<8, 12, 512, 512> = map add amax {{\n          INPUT x, y: f32\n          z: f32 = sub x y\n          OUTPUT z\n    }}\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nsub：f32[8, 12, 512, 512]\nexp: f32[8, 12, 512, 512] = torch.ops.aten.exp.default(sub)\nsub = None\n",
+        "output": "#BSIL: \nINPUT sub<8, 12, 512, 512>: f32 \nexp<8, 12, 512, 512> = map sub {{\n          INPUT x: f32\n          y: f32 = exp x\n          OUTPUT y\n    }}\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nsum_1: f32[8, 12, 512, 1] = torch.ops.aten.sum.dim_IntList(exp, [-1], True)\n",
+        "output": "#BSIL: \nsum_1<8, 12, 512, 1> = xreduce exp {{\n          INPUT row[512]: f32\n          sum: f32 = sum row\n          OUTPUT sum\n    }}\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nexp：f32[8, 12, 512, 512]\nsum_1: f32[8, 12, 512, 1] = torch.ops.aten.sum.dim_IntList(exp, [-1], True)\n",
+        "output": "#BSIL: \nINPUT exp<8, 12, 512, 512>: f32 \nsum_1<8, 12, 512, 1> = xreduce exp {{\n          INPUT row[512]: f32\n          sum: f32 = sum row\n          OUTPUT sum\n    }}\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nexp：f32[8, 12, 512, 512]\nsum_1：f32[8, 12, 512, 1]\ndiv_1: f32[8, 12, 512, 512] = torch.ops.aten.div.Tensor(exp, sum_1)\nexp = sum_1 = None\n",
+        "output": "#BSIL: \nINPUT exp<8, 12, 512, 512>: f32 \nINPUT sum_1<8, 12, 512, 1>: f32 \ndiv_1<8, 12, 512, 512> = map exp sum_1 {{\n          INPUT x, y: f32\n          z: f32 = div x y\n          OUTPUT z\n    }}\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nphilox_rand_like：f32[8, 12, 512, 512]\ngt: b8[8, 12, 512, 512] = torch.ops.aten.gt.Scalar(philox_rand_like, 0.1)\nphilox_rand_like = None\n",
+        "output": "#BSIL: \nINPUT philox_rand_like <8, 12, 512, 512>: f32 \ngt<8, 12, 512, 512>: u8 = map philox_rand_like {{\n          INPUT x: f32\n          gt: u8 = compare.gt x 0.1\n          OUTPUT gt\n    }}\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nconvert_element_type：f32[8, 12, 512, 512]\ndiv_1: f32[8, 12, 512, 512]\nmul: f32[8, 12, 512, 512] = torch.ops.aten.mul.Tensor(convert_element_type, div_1)\nconvert_element_type = None\n",
+        "output": "#BSIL: \nINPUT convert_element_type <8, 12, 512, 512>: f32 \nINPUT div_1 <8, 12, 512, 512>: f32 \nmul<8, 12, 512, 512> = map convert_element_type div_1 {{\n          INPUT x y: f32\n          z: f32 = mul x y\n          OUTPUT z\n    }}\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nmul：f32[8, 12, 512, 512]\nmul_1: f32[8, 12, 512, 512] = torch.ops.aten.mul.Tensor(mul, 1.1111111111111112)\nmul = None\n",
+        "output": "#BSIL: \nINPUT mul<8, 12, 512, 512>: f32 \nmul_1<8, 12, 512, 512> = map mul {{\n          INPUT x: f32\n          z: f32 = mul x 1.1111111111111112 \n          OUTPUT z\n    }}\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nexpand_2：f32[8, 12, 512, 512]\nview_10: f32[96, 512, 512] = torch.ops.aten.view.default(expand_2, [96, 512, 512])\nexpand_2 = None\n",
+        "output": "#BSIL: \nINPUT expand_2<8, 12, 512, 512>: f32 \nview_10<96, 512, 512> = view expand_2 {{\n          !shape=[96, 512, 512]\n          INPUT i0, i1, i2: u64\n          o0, o1 = idiv i0 12\n          OUTPUT o0, o1, i1, i2\n    }}\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nexpand_3: f32[8, 12, 512, 64]\nclone_2: f32[8, 12, 512, 64] = torch.ops.aten.clone.default(expand_3, memory_format = torch.contiguous_format)\nexpand_3 = None\n",
+        "output": "#BSIL: \nINPUT expand_3<8, 12, 512, 64>: f32\nclone_2<8, 12, 512, 64> = copy expand_3\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nclone_2: f32[8, 12, 512, 64]\n_unsafe_view_2: f32[96, 512, 64] = torch.ops.aten._unsafe_view.default(clone_2, [96, 512, 64])\nclone_2 = None\n",
+        "output": "#BSIL: \nINPUT clone_2<8, 12, 512, 64>: f32\n_unsafe_view_2<96, 512, 64> = view clone_2 {{\n          !shape = [96, 512, 64]\n          INPUT i0, i1, i2: u64\n          o0, o1 = idiv i0 12\n          OUTPUT o0, o1, i1, i2: u64\n    }}\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nview_10: f32[96, 512, 512]\n_unsafe_view_2: f32[96, 512, 64]\nbmm_1: f32[96, 512, 64] = torch.ops.aten.bmm.default(view_10, _unsafe_view_2)\n",
+        "output": "#BSIL: \nINPUT view_10<96, 512, 512>: f32\nINPUT _unsafe_view_2<96, 512, 64>: f32\nview_10_v<96, 512, 1, 512> = view view_10 {{\n          !shape = [96, 512, 1, 512]\n          INPUT i0, i1, _, i2: u64\n          OUTPUT i0, i1, i2\n    \n_unsafe_view_2_t<96, 1, 64, 512> = view _unsafe_view_2 {{\n          !shape = [96, 1, 64, 512]\n          INPUT i0, _, i1, i2: u64\n          OUTPUT i0, i2, i1\n    }}\n\nbmm_1<96, 512, 64> = join view_10_v _unsafe_view_2_t\n"
+    },
+    {
+        "instruction": "Convert following Python code into BSIL code.",
+        "input": "#Python: \nbmm_1：f32[96, 512, 64]\nview_11: f32[8, 12, 512, 64] = torch.ops.aten.view.default(bmm_1, [8, 12, 512, 64])\nbmm_1 = None\n",
+        "output": "#BSIL: \nINPUT bmm_1<96, 512, 512>: f32 \nview_11<8, 12, 512, 64> = view bmm_1 {{\n          !shape = [8, 12, 512, 64]\n          INPUT i0, i1, i2, i3: u64\n          o0 = linear [i0, i1] [12, 1]   \n          OUTPUT o0, i2, i3\n    }}\n"
+    }
+]

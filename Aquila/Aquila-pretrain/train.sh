@@ -1,0 +1,1 @@
+bash dist_trigger_docker.sh hostfile Aquila-pretrain.yaml aquila-7b aquila_experiment

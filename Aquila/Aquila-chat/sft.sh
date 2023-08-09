@@ -1,0 +1,1 @@
+bash dist_trigger_docker.sh hostfile Aquila-chat.yaml aquilachat-7b aquilaChat_experiment
